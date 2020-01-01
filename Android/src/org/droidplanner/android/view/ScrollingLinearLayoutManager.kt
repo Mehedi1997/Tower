@@ -2,9 +2,9 @@ package org.droidplanner.android.view
 
 import android.content.Context
 import android.graphics.PointF
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearSmoothScroller
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * @author ne0fhyk (Fredia Huya-Kouadio)
@@ -43,7 +43,7 @@ class ScrollingLinearLayoutManager(context: Context, orientation: Int, reverseLa
                 duration.toFloat()
         }
 
-        override fun computeScrollVectorForPosition(targetPosition: Int): PointF {
+        override fun computeScrollVectorForPosition(targetPosition: Int): PointF? {
             return this@ScrollingLinearLayoutManager.computeScrollVectorForPosition(targetPosition)
         }
 

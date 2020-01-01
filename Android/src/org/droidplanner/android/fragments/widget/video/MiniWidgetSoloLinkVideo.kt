@@ -43,7 +43,7 @@ public class MiniWidgetSoloLinkVideo : BaseVideoWidget() {
         view?.findViewById(R.id.sololink_video_status) as TextView?
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_mini_widget_solo_video, container, false)
     }
 

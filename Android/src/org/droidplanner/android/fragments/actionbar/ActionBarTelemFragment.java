@@ -208,7 +208,6 @@ public class ActionBarTelemFragment extends ApiListenerFragment {
             public void onClick(View v) {
                 //Launch dialog to allow the user to select vehicle modes
                 final Drone drone = getDrone();
-
                 final SelectionListDialog selectionDialog = SelectionListDialog.newInstance(new FlightModeAdapter(context, drone));
                 Utils.showDialog(selectionDialog, getChildFragmentManager(), "Flight modes selection", true);
             }

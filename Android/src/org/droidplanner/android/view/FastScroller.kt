@@ -5,7 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -87,7 +87,7 @@ class FastScroller(context: Context, attrs: AttributeSet, defStyleAttr: Int) : L
 
     private fun setRecyclerViewPosition(x: Float, y: Float){
         if(recyclerView != null){
-            val itemCount = recyclerView!!.adapter.itemCount
+            val itemCount = recyclerView!!.adapter!!.itemCount
             if(orientation == HORIZONTAL) {
                 val proportion = if (bubble.x == 0f) 0f
                 else if (bubble.x + bubble.width >= widthRef - TRACK_SNAP_RANGE) 1f
@@ -177,7 +177,7 @@ class FastScroller(context: Context, attrs: AttributeSet, defStyleAttr: Int) : L
             val firstVisiblePosition = recyclerView!!.getChildPosition(firstVisibleView)
             val visibleRange = recyclerView!!.childCount
             val lastVisiblePosition = firstVisiblePosition + visibleRange
-            val itemCount = recyclerView!!.adapter.itemCount
+            val itemCount = recyclerView!!.adapter!!.itemCount
             val position = if (firstVisiblePosition == 0) 0
             else if (lastVisiblePosition == itemCount - 1) itemCount - 1
             else firstVisiblePosition

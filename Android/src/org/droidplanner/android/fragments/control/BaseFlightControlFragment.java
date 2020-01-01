@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.Nullable;
+
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,14 +16,10 @@ import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.apis.FollowApi;
 import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.gcs.follow.FollowState;
-import com.o3dr.services.android.lib.gcs.follow.FollowType;
 
-import org.droidplanner.android.activities.DrawerNavigationUI;
-import org.droidplanner.android.fragments.FlightDataFragment;
 import org.droidplanner.android.fragments.SettingsFragment;
 import org.droidplanner.android.fragments.helpers.ApiListenerFragment;
 import org.droidplanner.android.utils.location.CheckLocationSettings;
-import org.droidplanner.android.utils.prefs.DroidPlannerPrefs;
 
 /**
  * Created by Fredia Huya-Kouadio on 5/25/15.

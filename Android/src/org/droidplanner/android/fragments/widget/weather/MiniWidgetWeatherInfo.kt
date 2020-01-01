@@ -98,7 +98,7 @@ class MiniWidgetWeatherInfo : TowerWidget() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_mini_widget_weather_info, container, false)
     }
 
@@ -111,14 +111,14 @@ class MiniWidgetWeatherInfo : TowerWidget() {
         super.onStart()
         gapiClientManager.start()
         processWeatherInfo()
-        context.registerReceiver(receiver, filter)
+        context?.registerReceiver(receiver, filter)
     }
 
     override fun onStop(){
         super.onStop()
         weatherAsyncTask?.cancel(true)
 
-        context.unregisterReceiver(receiver)
+        context?.unregisterReceiver(receiver)
         gapiClientManager.stopSafely()
     }
 
@@ -263,9 +263,9 @@ class MiniWidgetWeatherInfo : TowerWidget() {
             }
 
         } catch (e: IOException) {
-            Timber.e("Unable to access firmware server.", e)
+            Timber.e("Unable to access firmware server. %s", e)
         } catch (e: JSONException) {
-            Timber.e("Unable to parse the server response.", e)
+            Timber.e("Unable to parse the server response. %s", e)
         }
 
         return null

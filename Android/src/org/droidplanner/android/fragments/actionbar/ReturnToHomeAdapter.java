@@ -1,13 +1,12 @@
 package org.droidplanner.android.fragments.actionbar;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +19,6 @@ import com.o3dr.services.android.lib.gcs.returnToMe.ReturnToMeState;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 
 import org.droidplanner.android.R;
-import org.droidplanner.android.dialogs.SelectionListDialog;
 import org.droidplanner.android.utils.prefs.DroidPlannerPrefs;
 
 import timber.log.Timber;

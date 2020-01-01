@@ -4,7 +4,9 @@ package org.droidplanner.android.fragments.widget
 
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.o3dr.services.android.lib.drone.attribute.AttributeEvent
 import com.o3dr.services.android.lib.drone.attribute.AttributeType
 import com.o3dr.services.android.lib.drone.property.State
@@ -16,18 +18,18 @@ import org.droidplanner.android.fragments.widget.video.BaseUVCVideoWidget
 public class FullWidgetUVCLinkVideo : BaseUVCVideoWidget() {
 
     private val widgetButtonBar by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.widget_button_bar)
+        view?.findViewById(R.id.widget_button_bar)as LinearLayout?
     }
 
     private val takePhotoButton by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.uvc_take_picture_button)
+        view?.findViewById(R.id.uvc_take_picture_button)as FloatingActionButton?
     }
 
     private val recordVideo by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.uvc_record_video_button)
+        view?.findViewById(R.id.uvc_record_video_button)as FloatingActionButton?
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_widget_uvc_video, container, false)
     }
 
@@ -64,8 +66,8 @@ public class FullWidgetUVCLinkVideo : BaseUVCVideoWidget() {
             adjustAspectRatio(textureView as TextureView)
         }
 
-        takePhotoButton?.visibility = View.GONE
-        recordVideo?.visibility = View.GONE
+        (takePhotoButton as View)?.visibility = View.GONE
+        (recordVideo as View)?.visibility = View.GONE
         widgetButtonBar?.visibility = View.INVISIBLE
 
 

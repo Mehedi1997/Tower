@@ -22,9 +22,9 @@ import org.droidplanner.android.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;

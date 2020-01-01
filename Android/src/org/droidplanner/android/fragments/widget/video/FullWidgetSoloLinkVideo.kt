@@ -11,7 +11,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.o3dr.android.client.apis.GimbalApi
 import com.o3dr.android.client.apis.solo.SoloCameraApi
 import com.o3dr.services.android.lib.drone.attribute.AttributeEvent
@@ -85,23 +88,23 @@ public class FullWidgetSoloLinkVideo : BaseVideoWidget() {
     }
 
     private val widgetButtonBar by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.widget_button_bar)
+        view?.findViewById(R.id.widget_button_bar)as LinearLayout?
     }
 
     private val takePhotoButton by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.sololink_take_picture_button)
+        view?.findViewById(R.id.sololink_take_picture_button)as FloatingActionButton?
     }
 
     private val recordVideo by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.sololink_record_video_button)
+        view?.findViewById(R.id.sololink_record_video_button)as FloatingActionButton?
     }
 
     private val fpvVideo by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.sololink_vr_video_button)
+        view?.findViewById(R.id.sololink_vr_video_button)as FloatingActionButton?
     }
 
     private val touchCircleImage by lazy(LazyThreadSafetyMode.NONE) {
-        view?.findViewById(R.id.sololink_gimbal_joystick)
+        view?.findViewById(R.id.sololink_gimbal_joystick)as ImageView?
     }
 
     private val orientationListener = object : GimbalApi.GimbalOrientationListener {
@@ -113,8 +116,8 @@ public class FullWidgetSoloLinkVideo : BaseVideoWidget() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_widget_sololink_video, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_widget_sololink_video, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

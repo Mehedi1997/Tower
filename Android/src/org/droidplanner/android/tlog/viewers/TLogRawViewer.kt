@@ -1,8 +1,8 @@
 package org.droidplanner.android.tlog.viewers
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +21,7 @@ class TLogRawViewer : TLogViewer() {
     private var tlogEventsAdapter : TLogRawEventAdapter? = null
 
     private val loadingData by lazy {
-        getView()?.findViewById(R.id.loading_tlog_data)
+        getView()?.findViewById(R.id.loading_tlog_data)as TextView
     }
 
     private val noTLogView by lazy {
@@ -86,14 +86,14 @@ class TLogRawViewer : TLogViewer() {
         noTLogView?.visibility = View.GONE
         rawData?.visibility = View.GONE
         fastScroller.visibility = View.GONE
-        loadingData?.visibility = View.VISIBLE
+        loadingData.visibility = View.VISIBLE
     }
 
     private fun stateNoData(){
         noTLogView?.visibility = View.VISIBLE
         rawData?.visibility = View.GONE
         fastScroller.visibility = View.GONE
-        loadingData?.visibility = View.GONE
+        loadingData.visibility = View.GONE
     }
 
     private fun stateDataLoaded(){

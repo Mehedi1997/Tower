@@ -1,5 +1,6 @@
 package org.droidplanner.android.maps;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,15 +9,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -90,12 +94,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import timber.log.Timber;
 
 public class GoogleMapFragment extends SupportMapFragment implements DPMap,
-    GoogleApiClientManager.ManagerListener {
+        GoogleApiClientManager.ManagerListener {
 
     private static final long USER_LOCATION_UPDATE_INTERVAL = 30000; // ms
     private static final long USER_LOCATION_UPDATE_FASTEST_INTERVAL = 5000; // ms
@@ -357,8 +362,18 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     public void onStart() {
         super.onStart();
         mGApiClientMgr.start();
+        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getActivity()).getApplicationContext()
+                , Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(getActivity().getApplicationContext()
+                , Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-        mGApiClientMgr.addTask(mRequestLocationUpdateTask);
+            mGApiClientMgr.addTask(mRequestLocationUpdateTask);
+        } else {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+
+        }
+
         lbm.registerReceiver(eventReceiver, eventFilter);
         setupMap();
     }
@@ -374,15 +389,15 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.menu_google_map, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.menu_download_mapbox_map:
                 startActivity(new Intent(getContext(), DownloadMapboxMapActivity.class));
                 return true;
@@ -393,9 +408,9 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu){
+    public void onPrepareOptionsMenu(Menu menu) {
         final MenuItem item = menu.findItem(R.id.menu_download_mapbox_map);
-        if(item != null) {
+        if (item != null) {
             final boolean isEnabled = shouldShowDownloadMapMenuOption();
             item.setEnabled(isEnabled);
             item.setVisible(isEnabled);
@@ -403,13 +418,13 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     }
 
-    private boolean shouldShowDownloadMapMenuOption(){
+    private boolean shouldShowDownloadMapMenuOption() {
         final Context context = getContext();
         final @GoogleMapPrefConstants.TileProvider String tileProvider = GoogleMapPrefFragment.PrefManager
                 .getMapTileProvider(context);
 
         return (GoogleMapPrefConstants.MAPBOX_TILE_PROVIDER.equals(tileProvider)
-            || GoogleMapPrefConstants.ARC_GIS_TILE_PROVIDER.equals(tileProvider))
+                || GoogleMapPrefConstants.ARC_GIS_TILE_PROVIDER.equals(tileProvider))
                 && GoogleMapPrefFragment.PrefManager.addDownloadMenuOption(context);
     }
 
@@ -423,7 +438,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     @Override
     public void downloadMapTiles(MapDownloader mapDownloader, VisibleMapArea mapRegion, int minimumZ, int maximumZ) {
-        if(tileProviderManager == null)
+        if (tileProviderManager == null)
             return;
 
         tileProviderManager.downloadMapTiles(mapDownloader, mapRegion, minimumZ, maximumZ);
@@ -491,7 +506,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     }
 
     @Override
-    public void clearAll(){
+    public void clearAll() {
         clearUserMarker();
         clearLoopMarker();
         clearMarkers();
@@ -503,34 +518,34 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         clearPolygonPaths();
         clearDroneLeashPath();
         GoogleMap googleMap = getMap();
-        if(googleMap != null){
+        if (googleMap != null) {
             googleMap.clear();
         }
     }
 
-    private void clearUserMarker(){
-        if(userMarker != null){
+    private void clearUserMarker() {
+        if (userMarker != null) {
             userMarker.remove();
             userMarker = null;
         }
     }
 
-    private void clearLoopMarker(){
-        if(loopMarker != null){
+    private void clearLoopMarker() {
+        if (loopMarker != null) {
             loopMarker.remove();
             loopMarker = null;
         }
     }
 
-    private void clearFootPrints(){
-        if(footprintPoly != null){
+    private void clearFootPrints() {
+        if (footprintPoly != null) {
             footprintPoly.remove();
             footprintPoly = null;
         }
     }
 
-    private void clearPolygonPaths(){
-        for(Polygon polygon: polygonsPaths){
+    private void clearPolygonPaths() {
+        for (Polygon polygon : polygonsPaths) {
             polygon.remove();
         }
         polygonsPaths.clear();
@@ -538,29 +553,29 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     @Override
     public void clearMarkers() {
-        for(MarkerInfo markerInfo : markersMap.values()){
+        for (MarkerInfo markerInfo : markersMap.values()) {
             markerInfo.removeProxyMarker();
         }
 
         markersMap.clear();
     }
 
-    private void clearDroneLeashPath(){
-        if(mDroneLeashPath != null){
+    private void clearDroneLeashPath() {
+        if (mDroneLeashPath != null) {
             mDroneLeashPath.remove();
             mDroneLeashPath = null;
         }
     }
 
-    private void clearMissionPath(){
-        if(missionPath != null){
+    private void clearMissionPath() {
+        if (missionPath != null) {
             missionPath.remove();
             missionPath = null;
         }
     }
 
-    private void clearLoopPath(){
-        if(loopPath != null){
+    private void clearLoopPath() {
+        if (loopPath != null) {
             loopPath.remove();
             loopPath = null;
         }
@@ -568,41 +583,41 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     @Override
     public void clearPolylines() {
-        for(PolylineInfo info: polylinesMap.values()){
+        for (PolylineInfo info : polylinesMap.values()) {
             info.removeProxy();
         }
 
         polylinesMap.clear();
     }
 
-    private PolylineOptions fromPolylineInfo(PolylineInfo info){
+    private PolylineOptions fromPolylineInfo(PolylineInfo info) {
         return new PolylineOptions()
-            .addAll(MapUtils.coordToLatLng(info.getPoints()))
-            .clickable(info.isClickable())
-            .color(info.getColor())
-            .geodesic(info.isGeodesic())
-            .visible(info.isVisible())
-            .width(info.getWidth())
-            .zIndex(info.getZIndex());
+                .addAll(MapUtils.coordToLatLng(info.getPoints()))
+                .clickable(info.isClickable())
+                .color(info.getColor())
+                .geodesic(info.isGeodesic())
+                .visible(info.isVisible())
+                .width(info.getWidth())
+                .zIndex(info.getZIndex());
     }
 
-    private MarkerOptions fromMarkerInfo(MarkerInfo markerInfo, boolean isDraggable){
+    private MarkerOptions fromMarkerInfo(MarkerInfo markerInfo, boolean isDraggable) {
         final LatLong coord = markerInfo.getPosition();
         if (coord == null) {
             return null;
         }
 
         final MarkerOptions markerOptions = new MarkerOptions()
-            .position(MapUtils.coordToLatLng(coord))
-            .draggable(isDraggable)
-            .alpha(markerInfo.getAlpha())
-            .anchor(markerInfo.getAnchorU(), markerInfo.getAnchorV())
-            .infoWindowAnchor(markerInfo.getInfoWindowAnchorU(), markerInfo.getInfoWindowAnchorV())
-            .rotation(markerInfo.getRotation())
-            .snippet(markerInfo.getSnippet())
-            .title(markerInfo.getTitle())
-            .flat(markerInfo.isFlat())
-            .visible(markerInfo.isVisible());
+                .position(MapUtils.coordToLatLng(coord))
+                .draggable(isDraggable)
+                .alpha(markerInfo.getAlpha())
+                .anchor(markerInfo.getAnchorU(), markerInfo.getAnchorV())
+                .infoWindowAnchor(markerInfo.getInfoWindowAnchorU(), markerInfo.getInfoWindowAnchorV())
+                .rotation(markerInfo.getRotation())
+                .snippet(markerInfo.getSnippet())
+                .title(markerInfo.getTitle())
+                .flat(markerInfo.isFlat())
+                .visible(markerInfo.isVisible());
 
         final Bitmap markerIcon = markerInfo.getIcon(getResources());
         if (markerIcon != null) {
@@ -612,7 +627,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         return markerOptions;
     }
 
-    private MarkerOptions fromMarkerInfo(MarkerInfo markerInfo){
+    private MarkerOptions fromMarkerInfo(MarkerInfo markerInfo) {
         return fromMarkerInfo(markerInfo, markerInfo.isDraggable());
     }
 
@@ -634,18 +649,18 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     }
 
     @Override
-    public void addMarkers(final List<MarkerInfo> markerInfoList){
+    public void addMarkers(final List<MarkerInfo> markerInfoList) {
         addMarkers(markerInfoList, GET_DRAGGABLE_FROM_MARKER_INFO);
     }
 
     @Override
-    public void addMarkers(final List<MarkerInfo> markerInfoList, boolean isDraggable){
+    public void addMarkers(final List<MarkerInfo> markerInfoList, boolean isDraggable) {
         addMarkers(markerInfoList, isDraggable ? IS_DRAGGABLE : IS_NOT_DRAGGABLE);
     }
 
     @Override
     public void addPolyline(final PolylineInfo polylineInfo) {
-        if(polylineInfo == null || polylineInfo.isOnMap())
+        if (polylineInfo == null || polylineInfo.isOnMap())
             return;
 
         final PolylineOptions options = fromPolylineInfo(polylineInfo);
@@ -667,8 +682,8 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         for (int i = 0; i < infoCount; i++) {
             MarkerInfo markerInfo = markerInfoList.get(i);
             boolean isDraggable = draggableType == GET_DRAGGABLE_FROM_MARKER_INFO
-                ? markerInfo.isDraggable()
-                : draggableType == IS_DRAGGABLE;
+                    ? markerInfo.isDraggable()
+                    : draggableType == IS_DRAGGABLE;
             optionsSet[i] = markerInfo.isOnMap() ? null : fromMarkerInfo(markerInfo, isDraggable);
         }
 
@@ -702,8 +717,8 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     }
 
     @Override
-    public void removeMarker(MarkerInfo markerInfo){
-        if(markerInfo == null || !markerInfo.isOnMap())
+    public void removeMarker(MarkerInfo markerInfo) {
+        if (markerInfo == null || !markerInfo.isOnMap())
             return;
 
         ProxyMapMarker proxyMarker = (ProxyMapMarker) markerInfo.getProxyMarker();
@@ -724,7 +739,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     @Override
     public void removePolyline(PolylineInfo polylineInfo) {
-        if(polylineInfo == null || !polylineInfo.isOnMap())
+        if (polylineInfo == null || !polylineInfo.isOnMap())
             return;
 
         ProxyMapPolyline proxy = (ProxyMapPolyline) polylineInfo.getProxyPolyline();
@@ -820,8 +835,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
                     mDroneLeashPath.setPoints(pathPoints);
                 }
             });
-        }
-        else {
+        } else {
             mDroneLeashPath.setPoints(pathPoints);
         }
     }
@@ -845,12 +859,11 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
                     missionPath.setPoints(pathPoints);
                 }
             });
-        }
-        else {
+        } else {
             missionPath.setPoints(pathPoints);
         }
 
-        if(isLoop() && pathSource.getPathPoints().size() > 1) {
+        if (isLoop() && pathSource.getPathPoints().size() > 1) {
             LoopPathPoints.add(MapUtils.coordToLatLng(pathSource.getPathPoints().get(pathPoints.size() - 1)));
             LoopPathPoints.add(MapUtils.coordToLatLng(pathSource.getPathPoints().get(0)));
 
@@ -862,14 +875,14 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
                         .draggable(false)
                         .flat(true)
                         .visible(true)
-                        .title(String.valueOf(loopCount==-1?"Unlimited":loopCount))
-                        .anchor(0f,0.5f)
+                        .title(String.valueOf(loopCount == -1 ? "Unlimited" : loopCount))
+                        .anchor(0f, 0.5f)
                         .alpha(0.2f)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_info_white_24dp));
                 getMapAsync(new OnMapReadyCallback() {
                     @Override
                     public void onMapReady(GoogleMap googleMap) {
-                        if(loopPath == null) {
+                        if (loopPath == null) {
                             loopPath = getMap().addPolyline(pathLoopOptions);
                             loopPath.setPoints(LoopPathPoints);
                             loopMarker = googleMap.addMarker(pathLoopMarkerOptions);
@@ -878,7 +891,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
                 });
             } else {
                 loopPath.setPoints(LoopPathPoints);
-                loopMarker.setTitle(String.valueOf(loopCount==-1?"Unlimited":loopCount));
+                loopMarker.setTitle(String.valueOf(loopCount == -1 ? "Unlimited" : loopCount));
                 loopMarker.setPosition(midPoint(LoopPathPoints.get(0), LoopPathPoints.get(1)));
             }
         } else {
@@ -892,7 +905,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     /**
      * https://stackoverflow.com/questions/4656802/midpoint-between-two-latitude-and-longitude
      */
-    public LatLng midPoint(LatLng p1, LatLng p2){
+    public LatLng midPoint(LatLng p1, LatLng p2) {
         double lat1 = p1.latitude;
         double lon1 = p1.longitude;
         double lat2 = p2.latitude;
@@ -973,7 +986,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
     @Override
     public void saveCameraPosition() {
         final GoogleMap googleMap = getMap();
-        if(googleMap == null)
+        if (googleMap == null)
             return;
 
         CameraPosition camera = googleMap.getCameraPosition();
@@ -1094,7 +1107,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
             public void onMarkerDragStart(Marker marker) {
                 if (mMarkerDragListener != null) {
                     final MarkerInfo markerInfo = markersMap.get(marker);
-                    if(!(markerInfo instanceof GraphicHome)) {
+                    if (!(markerInfo instanceof GraphicHome)) {
                         markerInfo.setPosition(MapUtils.latLngToCoord(marker.getPosition()));
                         mMarkerDragListener.onMarkerDragStart(markerInfo);
                     }
@@ -1105,7 +1118,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
             public void onMarkerDrag(Marker marker) {
                 if (mMarkerDragListener != null) {
                     final MarkerInfo markerInfo = markersMap.get(marker);
-                    if(!(markerInfo instanceof GraphicHome)) {
+                    if (!(markerInfo instanceof GraphicHome)) {
                         markerInfo.setPosition(MapUtils.latLngToCoord(marker.getPosition()));
                         mMarkerDragListener.onMarkerDrag(markerInfo);
                     }
@@ -1148,11 +1161,11 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
     private void setupMapOverlay(GoogleMap map) {
         final Context context = getContext();
-        if(context == null)
+        if (context == null)
             return;
 
         final @GoogleMapPrefConstants.TileProvider String tileProvider = GoogleMapPrefFragment.PrefManager.getMapTileProvider(context);
-        switch(tileProvider){
+        switch (tileProvider) {
             case GoogleMapPrefConstants.GOOGLE_TILE_PROVIDER:
                 setupGoogleTileProvider(context, map);
                 break;
@@ -1167,17 +1180,17 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         }
     }
 
-    private void setupGoogleTileProvider(Context context, GoogleMap map){
+    private void setupGoogleTileProvider(Context context, GoogleMap map) {
         //Reset the tile provider manager
         tileProviderManager = null;
 
         //Remove the mapbox tile providers
-        if(offlineTileOverlay != null){
+        if (offlineTileOverlay != null) {
             offlineTileOverlay.remove();
             offlineTileOverlay = null;
         }
 
-        if(onlineTileOverlay != null){
+        if (onlineTileOverlay != null) {
             onlineTileOverlay.remove();
             onlineTileOverlay = null;
         }
@@ -1185,7 +1198,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         map.setMapType(GoogleMapPrefFragment.PrefManager.getMapType(context));
     }
 
-    private void setupArcGISTileProvider(Context context, GoogleMap map){
+    private void setupArcGISTileProvider(Context context, GoogleMap map) {
         Timber.i("Enabling ArcGIS tile provider.");
 
         //Remove the default google map layer
@@ -1194,39 +1207,39 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         final GoogleMapPrefFragment.PrefManager prefManager = GoogleMapPrefFragment.PrefManager;
         String selectedMap = prefManager.getArcGISMapType(context);
 
-        if(!(tileProviderManager instanceof ArcGISTileProviderManager)
-            || !selectedMap.equals(((ArcGISTileProviderManager) tileProviderManager).getSelectedMap())){
+        if (!(tileProviderManager instanceof ArcGISTileProviderManager)
+                || !selectedMap.equals(((ArcGISTileProviderManager) tileProviderManager).getSelectedMap())) {
 
             //Setup the online tile overlay
-            if(onlineTileOverlay != null){
+            if (onlineTileOverlay != null) {
                 onlineTileOverlay.remove();
                 onlineTileOverlay = null;
             }
 
             tileProviderManager = new ArcGISTileProviderManager(context, selectedMap);
             TileOverlayOptions options = new TileOverlayOptions()
-                .tileProvider(tileProviderManager.getOnlineTileProvider())
-                .zIndex(ONLINE_TILE_PROVIDER_Z_INDEX);
+                    .tileProvider(tileProviderManager.getOnlineTileProvider())
+                    .zIndex(ONLINE_TILE_PROVIDER_Z_INDEX);
 
             onlineTileOverlay = map.addTileOverlay(options);
 
             //Setup the offline tile overlay
-            if(offlineTileOverlay != null){
+            if (offlineTileOverlay != null) {
                 offlineTileOverlay.remove();
                 offlineTileOverlay = null;
             }
 
-            if(prefManager.isOfflineMapLayerEnabled(context)){
+            if (prefManager.isOfflineMapLayerEnabled(context)) {
                 options = new TileOverlayOptions()
-                    .tileProvider(tileProviderManager.getOfflineTileProvider())
-                    .zIndex(OFFLINE_TILE_PROVIDER_Z_INDEX);
+                        .tileProvider(tileProviderManager.getOfflineTileProvider())
+                        .zIndex(OFFLINE_TILE_PROVIDER_Z_INDEX);
 
                 offlineTileOverlay = map.addTileOverlay(options);
             }
         }
     }
 
-    private void setupMapboxTileProvider(Context context, GoogleMap map){
+    private void setupMapboxTileProvider(Context context, GoogleMap map) {
         Timber.d("Enabling mapbox tile provider.");
 
         //Remove the default google map layer.
@@ -1238,8 +1251,8 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         final int maxZoomLevel = (int) map.getMaxZoomLevel();
 
         if (!(tileProviderManager instanceof MapboxTileProviderManager)
-            || !mapboxId.equals(((MapboxTileProviderManager) tileProviderManager).getMapboxId())
-            || !mapboxAccessToken.equals(((MapboxTileProviderManager) tileProviderManager).getMapboxAccessToken())) {
+                || !mapboxId.equals(((MapboxTileProviderManager) tileProviderManager).getMapboxId())
+                || !mapboxAccessToken.equals(((MapboxTileProviderManager) tileProviderManager).getMapboxAccessToken())) {
 
             //Setup the online tile overlay
             if (onlineTileOverlay != null) {
@@ -1249,28 +1262,28 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
             tileProviderManager = new MapboxTileProviderManager(context, mapboxId, mapboxAccessToken, maxZoomLevel);
             TileOverlayOptions options = new TileOverlayOptions()
-                .tileProvider(tileProviderManager.getOnlineTileProvider())
-                .zIndex(ONLINE_TILE_PROVIDER_Z_INDEX);
+                    .tileProvider(tileProviderManager.getOnlineTileProvider())
+                    .zIndex(ONLINE_TILE_PROVIDER_Z_INDEX);
 
             onlineTileOverlay = map.addTileOverlay(options);
 
             //Setup the offline tile overlay
-            if(offlineTileOverlay != null){
+            if (offlineTileOverlay != null) {
                 offlineTileOverlay.remove();
                 offlineTileOverlay = null;
             }
 
-            if(prefManager.isOfflineMapLayerEnabled(context)){
+            if (prefManager.isOfflineMapLayerEnabled(context)) {
                 options = new TileOverlayOptions()
-                    .tileProvider(tileProviderManager.getOfflineTileProvider())
-                    .zIndex(OFFLINE_TILE_PROVIDER_Z_INDEX);
+                        .tileProvider(tileProviderManager.getOfflineTileProvider())
+                        .zIndex(OFFLINE_TILE_PROVIDER_Z_INDEX);
 
                 offlineTileOverlay = map.addTileOverlay(options);
             }
         }
 
         //Check if the mapbox credentials are valid.
-        new AsyncTask<Void, Void, Integer>(){
+        new AsyncTask<Void, Void, Integer>() {
 
             @Override
             protected Integer doInBackground(Void... params) {
@@ -1279,9 +1292,9 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
             }
 
             @Override
-            protected void onPostExecute(Integer result){
-                if(result != null){
-                    switch(result){
+            protected void onPostExecute(Integer result) {
+                if (result != null) {
+                    switch (result) {
                         case HttpURLConnection.HTTP_UNAUTHORIZED:
                         case HttpURLConnection.HTTP_NOT_FOUND:
                             //Invalid mapbox credentials
@@ -1323,9 +1336,9 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         }
     }
 
-    public VisibleMapArea getVisibleMapArea(){
+    public VisibleMapArea getVisibleMapArea() {
         final GoogleMap map = getMap();
-        if(map == null)
+        if (map == null)
             return null;
 
         final VisibleRegion mapRegion = map.getProjection().getVisibleRegion();
@@ -1466,7 +1479,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
         private final Marker marker;
 
-        ProxyMapMarker(Marker marker){
+        ProxyMapMarker(Marker marker) {
             this.marker = marker;
         }
 
@@ -1492,7 +1505,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
         @Override
         public void setIcon(Bitmap icon) {
-            if(icon != null) {
+            if (icon != null) {
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(icon));
             }
         }
@@ -1504,7 +1517,7 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
 
         @Override
         public void setPosition(LatLong coord) {
-            if(coord != null) {
+            if (coord != null) {
                 marker.setPosition(MapUtils.coordToLatLng(coord));
             }
         }
@@ -1530,23 +1543,23 @@ public class GoogleMapFragment extends SupportMapFragment implements DPMap,
         }
 
         @Override
-        public void removeMarker(){
+        public void removeMarker() {
             marker.remove();
         }
 
         @Override
-        public boolean equals(Object other){
-            if(this == other)
+        public boolean equals(Object other) {
+            if (this == other)
                 return true;
 
-            if(!(other instanceof ProxyMapMarker))
+            if (!(other instanceof ProxyMapMarker))
                 return false;
 
             return this.marker.equals(((ProxyMapMarker) other).marker);
         }
 
         @Override
-        public int hashCode(){
+        public int hashCode() {
             return this.marker.hashCode();
         }
     }

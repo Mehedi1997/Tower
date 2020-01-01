@@ -5,10 +5,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.preference.*
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.preference.*
 import com.google.android.gms.maps.GoogleMap
 import org.droidplanner.android.R
 import org.droidplanner.android.dialogs.EditInputDialog
@@ -65,7 +65,7 @@ class GoogleMapPrefFragment : MapProviderPreferences(), EditInputDialog.Listener
 
         fun getArcGISMapType(context: Context): String {
             val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-            return sharedPref.getString(PREF_ARCGIS_MAP_TYPE, context.getString(DEFAULT_ARCGIS_MAP_TYPE))
+            return sharedPref.getString(PREF_ARCGIS_MAP_TYPE, context.getString(DEFAULT_ARCGIS_MAP_TYPE))!!
         }
 
         fun getMapType(context: Context?): Int {
@@ -89,7 +89,7 @@ class GoogleMapPrefFragment : MapProviderPreferences(), EditInputDialog.Listener
             var tileProvider = DEFAULT_TILE_PROVIDER
             context?.let {
                 val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-                tileProvider = sharedPref.getString(PREF_TILE_PROVIDERS, tileProvider)
+                tileProvider = sharedPref.getString(PREF_TILE_PROVIDERS, tileProvider)!!
             }
 
             return tileProvider
@@ -122,7 +122,7 @@ class GoogleMapPrefFragment : MapProviderPreferences(), EditInputDialog.Listener
         fun getMapboxId(context: Context?): String {
             return if(context == null) "" else{
                 val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-                sharedPref.getString(PREF_MAPBOX_ID, "")
+                sharedPref.getString(PREF_MAPBOX_ID, "")!!
             }
         }
 
@@ -136,7 +136,7 @@ class GoogleMapPrefFragment : MapProviderPreferences(), EditInputDialog.Listener
         fun getMapboxAccessToken(context: Context?): String {
             return if(context == null) "" else{
                 val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-                sharedPref.getString(PREF_MAPBOX_ACCESS_TOKEN, "")
+                sharedPref.getString(PREF_MAPBOX_ACCESS_TOKEN, "")!!
             }
         }
 
@@ -289,7 +289,7 @@ class GoogleMapPrefFragment : MapProviderPreferences(), EditInputDialog.Listener
                     }
             }
 
-            toggleTileProviderPrefs(tileProvider)
+            toggleTileProviderPrefs(tileProvider!!)
         }
     }
 

@@ -3,56 +3,56 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 
 dependencies {
-    compile 'com.android.support:multidex:1.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-    compile "com.google.android.gms:play-services-maps:${play_services_version}"
-    compile "com.google.android.gms:play-services-location:${play_services_version}"
-    compile "com.google.android.gms:play-services-analytics:${play_services_version}"
+    implementation "com.google.android.gms:play-services-maps:${play_services_version}"
+    implementation "com.google.android.gms:play-services-location:${play_services_version}"
+    implementation "com.google.android.gms:play-services-analytics:${play_services_version}"
 
-    compile "com.android.support:support-v4:${support_lib_version}"
-    compile "com.android.support:appcompat-v7:${support_lib_version}"
-    compile "com.android.support:preference-v7:${support_lib_version}"
-    compile "com.android.support:preference-v14:${support_lib_version}"
-    compile "com.android.support:cardview-v7:${support_lib_version}"
-    compile "com.android.support:recyclerview-v7:${support_lib_version}"
-    compile "com.android.support:design:${support_lib_version}"
-
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation "androidx.preference:preference:1.1.0"
     // Android library to display the changelog
-    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
+    implementation "androidx.preference:preference-ktx:1.1.0"
+    implementation 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
 
     //DroneKit-Android client lib
-    compile 'com.o3dr.android:dronekit-android:3.0.2'
+    implementation 'com.o3dr.android:dronekit-android:3.0.2'
     //Comment line above, and uncomment line below to use your local version of the dronekit-android client lib
     //Don't forget to uncomment the lines in the settings.gradle file as well.
-//     compile project(':ClientLib')
+//     implementation project(':ClientLib')
 
-    compile 'me.grantland:autofittextview:0.2.1'
-    compile(name:'shimmer-android-release', ext:'aar')
-    compile(name:'libuvccamera-release', ext:'aar')
-    compile(name:'sliding-up-panel-3.3.0', ext:'aar')
+    implementation 'me.grantland:autofittextview:0.2.1'
+    implementation(name: 'shimmer-android-release', ext: 'aar')
+    implementation(name: 'libuvccamera-release', ext: 'aar')
+    implementation(name: 'sliding-up-panel-3.3.0', ext: 'aar')
 
-    compile files('libs/droneapi-java-0.3-SNAPSHOT.jar')
-    compile files('libs/protobuf-java-2.5.0.jar')
-    compile files('libs/jeromq-0.3.4.jar')
-    compile files('libs/sius-0.3.1-SNAPSHOT.jar')
-    compile files('libs/BaiduLBS_Android.jar')
+    implementation files('libs/droneapi-java-0.3-SNAPSHOT.jar')
+    implementation files('libs/protobuf-java-2.5.0.jar')
+    implementation files('libs/jeromq-0.3.4.jar')
+    implementation files('libs/sius-0.3.1-SNAPSHOT.jar')
+    implementation files('libs/BaiduLBS_Android.jar')
 
-    compile "com.squareup.okhttp:okhttp:${okhttp_version}"
-    compile "com.squareup.okhttp:okhttp-urlconnection:${okhttp_version}"
+    implementation "com.squareup.okhttp:okhttp:${okhttp_version}"
+    implementation "com.squareup.okhttp:okhttp-urlconnection:${okhttp_version}"
 
-    compile 'com.jakewharton.timber:timber:3.1.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
 
     //Charts and graph library
-    compile 'com.github.lecho:hellocharts-library:1.5.5@aar'
+    implementation 'com.github.lecho:hellocharts-library:1.5.5@aar'
 
     //Leak canary (https://github.com/square/leakcanary)
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 }
 
 def versionPrefix = "Tower-v"
@@ -80,7 +80,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'org.droidplanner.android'
+        applicationId 'com.uavsoft.android'
         minSdkVersion android_build_min_sdk_version
         targetSdkVersion android_build_target_sdk_version
         versionCode computeVersionCode(versionMajor, versionMinor, versionPatch, versionBuild)
@@ -92,7 +92,7 @@ android {
 
         //Manifest placeholders (http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger#TOC-Placeholder-support)
         manifestPlaceholders = [
-            fabricApiKey:getFabricApiKey()
+                fabricApiKey: getFabricApiKey()
         ]
 
         // Enabling multidex support.
@@ -143,13 +143,16 @@ android {
     }
 
     android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
+        variant.outputs.all { output ->
             def file = output.outputFile
             if (file != null && file.name.endsWith('.apk')) {
                 def buildType = variant.buildType.getName()
                 def flavorName = variant.getFlavorName()
                 def versionCode = defaultConfig.versionCode
-                output.outputFile = new File(file.parent, "tower-${flavorName}-${buildType}.${versionCode}.apk")
+                outputFileName = new File(
+                        "tower-${flavorName}-${buildType}.${versionCode}.apk", // here you can change the name
+                        output.outputFile.name)
+                //output.outputFile = new File(file.parent, "tower-${flavorName}-${buildType}.${versionCode}.apk")
             }
         }
     }
@@ -185,8 +188,11 @@ android {
         }
     }
 
+    flavorDimensions "version"
     productFlavors {
         dev {
+            dimension "version"
+
             applicationIdSuffix ".debug"
             resValue "string", "app_title", "Tower Dev"
             resValue "string", "baidu_api_key", ""
@@ -197,6 +203,7 @@ android {
         }
 
         beta {
+            dimension "version"
             applicationIdSuffix ".beta"
             resValue "string", "app_title", "Tower Beta"
             resValue "string", "baidu_api_key", "4x7A3lUHEmzFxosafDa4bLP7yinmEnPh"
@@ -207,6 +214,7 @@ android {
         }
 
         prod {
+            dimension "version"
             resValue "string", "app_title", "Tower"
             resValue "string", "baidu_api_key", "41mPy2URFjOL61GzyWk8U5oLhhwSYGWe"
             buildConfigField "boolean", "WRITE_LOG_FILE", "false"
@@ -226,18 +234,18 @@ android {
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "${hasFabricApiKey()}"
         }
     }
-    buildToolsVersion '24.0.1'
+    buildToolsVersion '29.0.1'
 }
 
 /**
  * @return The most recent git tag to be used as version name for the app.
  */
-def getGitVersion(){
+def getGitVersion() {
     def cmd = "git describe --tag"
     try {
         def proc = cmd.execute()
         return proc.text.trim()
-    }catch(IOException e){
+    } catch (IOException e) {
         //Unable to find 'git'
         return "please update version name manually"
     }
@@ -248,7 +256,7 @@ def getAppKeystoreFile() {
     return filePath ? file(filePath) : null
 }
 
-def getAppKeystorePassword(){
+def getAppKeystorePassword() {
     return hasProperty('ORG_DROIDPLANNER_ANDROID_KEYSTORE_PWD') ? ORG_DROIDPLANNER_ANDROID_KEYSTORE_PWD : ''
 }
 
@@ -260,10 +268,10 @@ def getAppKey() {
     return hasProperty('ORG_DROIDPLANNER_ANDROID_KEY_ALIAS') ? ORG_DROIDPLANNER_ANDROID_KEY_ALIAS : ''
 }
 
-def getFabricApiKey(){
+def getFabricApiKey() {
     return hasFabricApiKey() ? COM_O3DR_FABRIC_API_KEY : ''
 }
 
-def hasFabricApiKey(){
+def hasFabricApiKey() {
     return hasProperty('COM_O3DR_FABRIC_API_KEY')
 }
